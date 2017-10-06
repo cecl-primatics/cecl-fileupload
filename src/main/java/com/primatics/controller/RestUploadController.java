@@ -71,7 +71,7 @@ public class RestUploadController {
 		try {
 			saveUploadedFiles(Arrays.asList(uploadfiles), extraField);
 			Stopwatch watch = Stopwatch.createStarted();
-			numOfFiles = restTemplate.getForEntity("http://localhost:8081/runjob/split/"+run_name, Integer.class);
+			numOfFiles = restTemplate.getForEntity("http://localhost:8083/runjob/split/"+run_name, Integer.class);
 			stopped = watch.stop();
 		} catch (IOException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -88,16 +88,16 @@ public class RestUploadController {
 
 		logger.debug("CALCULATE");
 		Stopwatch stopped = Stopwatch.createStarted();		
-		ResponseEntity<String> start = restTemplate.getForEntity("http://localhost:8080/api/start", String.class);
+		ResponseEntity<String> start = restTemplate.getForEntity("http://localhost:8082/api/start", String.class);
 		stopped = stopped.stop();
 		
 		logger.debug("IMPORT");
 		Stopwatch imp = Stopwatch.createStarted();		
-		restTemplate.getForEntity("http://localhost:8080/api/import", Stopwatch.class);
+		restTemplate.getForEntity("http://localhost:8082/api/import", Stopwatch.class);
 		imp = imp.stop();
 		
 		Stopwatch imp1 = Stopwatch.createStarted();
-		restTemplate.getForEntity("http://localhost:8080/api/cache", Stopwatch.class);
+		restTemplate.getForEntity("http://localhost:8082/api/cache", Stopwatch.class);
 		imp1 = imp1.stop();
 		
 		return new ResponseEntity("Client Start "+start.getBody()+" in "+stopped+" and Cache import took "+imp+" Calculation done in "+imp1, new HttpHeaders(),
