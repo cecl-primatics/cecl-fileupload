@@ -54,6 +54,7 @@
 	</dependencies>
 
 	<build>
+	<finalName>cecl-fileupload-service</finalName>
 		<plugins>
 			<!-- Package as an executable jar/war -->
 			<plugin>
