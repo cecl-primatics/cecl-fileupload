@@ -1,6 +1,5 @@
 package com.primatics.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -18,11 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,20 +32,18 @@ import com.mongodb.gridfs.GridFSDBFile;
 public class RestUploadController {
 
 	private final Logger logger = LoggerFactory.getLogger(RestUploadController.class);
-
 	private final GridFsTemplate gridFsTemplate;
-	
+	ResponseEntity<Integer> numOfFiles;
+	public static String run_name = "";
+
 	@Autowired
 	RestTemplate restTemplate;
 
-	ResponseEntity<Integer> numOfFiles;
-	
-	public static String run_name = "";
-	
 	@Autowired
 	public RestUploadController(GridFsTemplate gridFsTemplate) {
 		this.gridFsTemplate = gridFsTemplate;
 	}
+
 	// Multiple file upload
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@PostMapping("/api/upload/multi")
@@ -68,14 +62,14 @@ public class RestUploadController {
 		try {
 			saveUploadedFiles(Arrays.asList(uploadfiles), extraField);
 			Stopwatch watch = Stopwatch.createStarted();
-			numOfFiles = restTemplate.getForEntity("http://localhost:8083/runjob/split/"+run_name, Integer.class);
+			numOfFiles = restTemplate.getForEntity("http://localhost:8083/runjob/split/" + run_name, Integer.class);
 			stopped = watch.stop();
 		} catch (IOException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity("Successfully uploaded - " + uploadedFileName + " -- "+numOfFiles.getBody()+" Loans Parsed for Run: "+run_name+ " in "+stopped, new HttpHeaders(),
-				HttpStatus.OK);
+		return new ResponseEntity("Successfully uploaded - " + uploadedFileName + " -- " + numOfFiles.getBody()
+				+ " Loans Parsed for Run: " + run_name + " in " + stopped, new HttpHeaders(), HttpStatus.OK);
 
 	}
 
@@ -83,25 +77,24 @@ public class RestUploadController {
 	@PostMapping("/api/calculate")
 	public ResponseEntity<?> calculate() {
 
-		logger.debug("CALCULATE");
-		Stopwatch stopped = Stopwatch.createStarted();		
+		/*logger.debug("CALCULATE");
+		Stopwatch stopped = Stopwatch.createStarted();
 		ResponseEntity<String> start = restTemplate.getForEntity("http://localhost:8082/api/start", String.class);
 		stopped = stopped.stop();
-		
+
 		logger.debug("IMPORT");
-		Stopwatch imp = Stopwatch.createStarted();		
+		Stopwatch imp = Stopwatch.createStarted();
 		restTemplate.getForEntity("http://localhost:8082/api/import", Stopwatch.class);
-		imp = imp.stop();
-		
+		imp = imp.stop();*/
+
 		Stopwatch imp1 = Stopwatch.createStarted();
 		restTemplate.getForEntity("http://localhost:8082/api/cache", Stopwatch.class);
 		imp1 = imp1.stop();
-		
-		return new ResponseEntity("Client Start "+start.getBody()+" in "+stopped+" and Cache import took "+imp+" Calculation done in "+imp1, new HttpHeaders(),
-				HttpStatus.OK);
+
+		return new ResponseEntity(" Calculation done in " + imp1, new HttpHeaders(), HttpStatus.OK);
 
 	}
-	
+
 	// save file
 	private HttpEntity<byte[]> saveUploadedFiles(List<MultipartFile> files, String extraField) throws IOException {
 
@@ -123,13 +116,13 @@ public class RestUploadController {
 		try {
 			Optional<GridFSDBFile> existing = maybeLoadFile(name);
 			if (existing.isPresent()) {
-				runName = "DUPLICATE_"+runName;
+				runName = "DUPLICATE_" + runName;
 			}
 			DBObject metadata = new BasicDBObject();
 			metadata.put("run_name", runName);
 			gridFsTemplate.store(file.getInputStream(), name, file.getContentType(), metadata).save();
 			String resp = "<script>window.location = '/';</script>";
-			
+
 			return new HttpEntity<>(resp.getBytes());
 		} catch (IOException e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -144,32 +137,4 @@ public class RestUploadController {
 		GridFSDBFile file = gridFsTemplate.findOne(getFilenameQuery(name));
 		return Optional.ofNullable(file);
 	}
-
-	@GetMapping("/files")
-	public @ResponseBody List<String> list() {
-		return getFiles().stream().map(GridFSDBFile::getFilename).collect(Collectors.toList());
-	}
-
-	@GetMapping("/{name:.+}")
-	public HttpEntity<byte[]> get(@PathVariable("name") String name) {
-		try {
-			Optional<GridFSDBFile> optionalCreated = maybeLoadFile(name);
-			if (optionalCreated.isPresent()) {
-				GridFSDBFile created = optionalCreated.get();
-				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				created.writeTo(os);
-				HttpHeaders headers = new HttpHeaders();
-				headers.add(HttpHeaders.CONTENT_TYPE, created.getContentType());
-				return new HttpEntity<>(os.toByteArray(), headers);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-		} catch (IOException e) {
-			return new ResponseEntity<>(HttpStatus.IM_USED);
-		}
-	}
-	
-	private List<GridFSDBFile> getFiles() {
-	    return gridFsTemplate.find(null);
-	  }
 }

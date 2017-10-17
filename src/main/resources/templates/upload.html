@@ -11,6 +11,20 @@
 	height: 30px;
 	background-color: #4CAF50;
 }
+
+#wrapper {
+	margin-right: 200px;
+}
+
+#content {
+	float: left;
+	width: 100%;
+}
+
+#sidebar {
+	float: right;
+	width: 200px;
+}
 </style>
 <head>
 <meta charset="utf-8" />
@@ -28,39 +42,39 @@
 
 	<div class="form-group">
 		<form method="POST" enctype="multipart/form-data" id="fileUploadForm">
-			<label for="run">Name your Run:</label> <input type="text"
-				name="extraField" /> <br /> <br /> <label for="file1">Choose
-				Raw CSV:</label> <input type="file" class="" name="files" />
-			<!-- <br /> 
-				<br />
+					<label for="run">Name your Run:</label> <input type="text"
+						name="extraField" /> <br /> <br />
+					<label for="file1">Choose Raw CSV:</label> <input type="file"
+						class="" name="files" />
+			<br /> 
+			<!-- 	<br />
 				<label for="file2">Choose Another Raw CSV:</label> 
 				<input type="file" name="files" /> -->
-			<br /> <br /> <input class="btn btn-primary" onClick="move()"
-				type="submit" value="Submit" id="btnSubmit" />
+			<input class="btn btn-primary" onClick="move()" type="submit"
+				value="Submit" id="btnSubmit" />
 		</form>
 	</div>
 	<p class="bg-success" id="result"></p>
 	<script type="text/javascript" src="js/main.js"></script>
 	<div id="myProgress">
-		<div class="progress-bar progress-bar-striped active" role="progressbar" id="myBar" style="text-align: center; color: #fff">Saved!
+		<div class="progress-bar progress-bar-striped active"
+			role="progressbar" id="myBar" style="text-align: center; color: #fff">Saved!
 			Extracting, Transforming and Loading...</div>
 	</div>
-	
-	
-	
 	<div class="form-group">
 		<form method="POST" enctype="text/plain" id="calcForm">
-			<label for="run"></label> <input class="btn btn-primary" onClick="calc()"
-				type="hidden" value="Calculate" id="btnCalc" />
+			<label for="run"></label> <input class="btn btn-primary"
+				onClick="calc()" type="hidden" value="Calculate" id="btnCalc" />
 		</form>
 	</div>
 	<p class="bg-success" id="result1"></p>
 	<script type="text/javascript" src="js/calc.js"></script>
 	<div id="myCalc">
-		<div class="progress-bar progress-bar-striped active" role="progressbar" id="myCal" style="text-align: center; color: #fff">Calculating...</div>
+		<div class="progress-bar progress-bar-striped active"
+			role="progressbar" id="myCal" style="text-align: center; color: #fff">Calculating...</div>
 	</div>
-	
-	<ul id="file-list"></ul>
+
+	<!-- <ul id="file-list"></ul> -->
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
