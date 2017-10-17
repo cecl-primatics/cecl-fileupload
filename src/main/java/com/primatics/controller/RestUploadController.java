@@ -77,16 +77,6 @@ public class RestUploadController {
 	@PostMapping("/api/calculate")
 	public ResponseEntity<?> calculate() {
 
-		/*logger.debug("CALCULATE");
-		Stopwatch stopped = Stopwatch.createStarted();
-		ResponseEntity<String> start = restTemplate.getForEntity("http://localhost:8082/api/start", String.class);
-		stopped = stopped.stop();
-
-		logger.debug("IMPORT");
-		Stopwatch imp = Stopwatch.createStarted();
-		restTemplate.getForEntity("http://localhost:8082/api/import", Stopwatch.class);
-		imp = imp.stop();*/
-
 		Stopwatch imp1 = Stopwatch.createStarted();
 		restTemplate.getForEntity("http://localhost:8082/api/cache", Stopwatch.class);
 		imp1 = imp1.stop();
