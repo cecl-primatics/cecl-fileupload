@@ -2,11 +2,8 @@ $(document).ready(function() {
 
 	$("#btnSubmit").click(function(event) {
 
-		//stop submit the form, we will post it manually.
 		event.preventDefault();
-
 		fire_ajax_submit();
-
 	});
 });
 
@@ -40,7 +37,9 @@ function fire_ajax_submit() {
 			$('#btnCalc').html('Save');
 			console.log("SUCCESS : ", data);
 			$("#btnSubmit").prop("disabled", true);
-
+			$('#continue').click(function() {
+				$('.nav-tabs > .active').next('li').find('a').trigger('click');
+			});
 		},
 		error : function(e) {
 

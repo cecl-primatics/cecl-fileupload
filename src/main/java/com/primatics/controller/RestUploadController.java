@@ -34,7 +34,6 @@ public class RestUploadController {
 	private final Logger logger = LoggerFactory.getLogger(RestUploadController.class);
 	private final GridFsTemplate gridFsTemplate;
 	ResponseEntity<Integer> numOfFiles;
-	public static String run_name = "";
 
 	@Autowired
 	RestTemplate restTemplate;
@@ -49,7 +48,7 @@ public class RestUploadController {
 	@PostMapping("/api/upload/multi")
 	public ResponseEntity<?> uploadFileMulti(@RequestParam("extraField") String extraField,
 			@RequestParam("files") MultipartFile[] uploadfiles) {
-
+		String run_name = "";
 		logger.debug("Multiple file upload!");
 		Stopwatch stopped;
 		String uploadedFileName = Arrays.stream(uploadfiles).map(x -> x.getOriginalFilename())
@@ -64,24 +63,14 @@ public class RestUploadController {
 			Stopwatch watch = Stopwatch.createStarted();
 			numOfFiles = restTemplate.getForEntity("http://localhost:8083/runjob/split/" + run_name, Integer.class);
 			stopped = watch.stop();
+			long heapSize = Runtime.getRuntime().totalMemory();
+	        System.out.println("UPLOAD CONTROLLER - Heap Size = " + heapSize + " - Time: "+stopped);
 		} catch (IOException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity("Successfully uploaded - " + uploadedFileName + " -- " + numOfFiles.getBody()
 				+ " Loans Parsed for Run: " + run_name + " in " + stopped, new HttpHeaders(), HttpStatus.OK);
-
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@PostMapping("/api/calculate")
-	public ResponseEntity<?> calculate() {
-
-		Stopwatch imp1 = Stopwatch.createStarted();
-		restTemplate.getForEntity("http://localhost:8082/api/cache", Stopwatch.class);
-		imp1 = imp1.stop();
-
-		return new ResponseEntity(" Calculation done in " + imp1, new HttpHeaders(), HttpStatus.OK);
 
 	}
 
@@ -104,7 +93,7 @@ public class RestUploadController {
 		String name = file.getOriginalFilename();
 		String runName = extraField + "_" + name.substring(0, name.lastIndexOf('.'));
 		try {
-			Optional<GridFSDBFile> existing = maybeLoadFile(name);
+			Optional<GridFSDBFile> existing = maybeLoadFile(runName);
 			if (existing.isPresent()) {
 				runName = "DUPLICATE_" + runName;
 			}
@@ -120,7 +109,7 @@ public class RestUploadController {
 	}
 
 	private static Query getFilenameQuery(String name) {
-		return Query.query(GridFsCriteria.whereFilename().is(name));
+		return Query.query(GridFsCriteria.whereMetaData().is(name));
 	}
 
 	private Optional<GridFSDBFile> maybeLoadFile(String name) {

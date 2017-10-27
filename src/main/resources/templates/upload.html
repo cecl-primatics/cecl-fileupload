@@ -25,6 +25,14 @@
 	float: right;
 	width: 200px;
 }
+
+.tabs-wrap {
+	margin-top: 40px;
+}
+
+.tab-content .tab-pane {
+	padding: 20px 0;
+}
 </style>
 <head>
 <meta charset="utf-8" />
@@ -35,23 +43,33 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap-wizard/1.2/jquery.bootstrap.wizard.min.js"></script>
 </head>
 <body>
+	<div class="container tabs-wrap">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active"><a href="#upload"
+				aria-controls="upload" role="tab" data-toggle="tab"
+				aria-expanded="true">Upload</a></li>
+			<li><a href="#process" aria-controls="process" role="tab"
+				data-toggle="tab" aria-expanded="false">Process</a></li>
+			<li><a href="#adjust" aria-controls="adjust" role="tab"
+				data-toggle="tab" aria-expanded="false">Adjust</a></li>
+		</ul>
 
-	<h2>Upload Raw data and Run Loan-level Calculation</h2>
-
-	<div class="form-group">
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="upload">
+				<h3 class="">Upload</h3>
+				<p>Upload File</p>
+        <div class="form-group">
 		<form method="POST" enctype="multipart/form-data" id="fileUploadForm">
-					<label for="run">Name your Run:</label> <input type="text"
-						name="extraField" /> <br /> <br />
-					<label for="file1">Choose Raw CSV:</label> <input type="file"
-						class="" name="files" />
-			<br /> 
+			<label for="run">Scenario:</label> <input type="text"
+				name="extraField" /> <br /> <br /> <label for="file1">Choose
+				Raw CSV:</label> <input type="file" class="" name="files" /> <br />
 			<!-- 	<br />
 				<label for="file2">Choose Another Raw CSV:</label> 
 				<input type="file" name="files" /> -->
-			<input class="btn btn-primary" onClick="move()" type="submit"
-				value="Submit" id="btnSubmit" />
 		</form>
 	</div>
 	<p class="bg-success" id="result"></p>
@@ -61,42 +79,30 @@
 			role="progressbar" id="myBar" style="text-align: center; color: #fff">Saved!
 			Extracting, Transforming and Loading...</div>
 	</div>
-	<div class="form-group">
-		<form method="POST" enctype="text/plain" id="calcForm">
-			<label for="run"></label> <input class="btn btn-primary"
-				onClick="calc()" type="hidden" value="Calculate" id="btnCalc" />
-		</form>
-	</div>
-	<p class="bg-success" id="result1"></p>
-	<script type="text/javascript" src="js/calc.js"></script>
-	<div id="myCalc">
-		<div class="progress-bar progress-bar-striped active"
-			role="progressbar" id="myCal" style="text-align: center; color: #fff">Calculating...</div>
-	</div>
-	<div id="calculator">
-    <iframe src="http://18.220.215.95:8084/home" style="width:100%;height: 600px; border: 0px"></iframe>
-</div>
+				<input class="btn btn-primary" onClick="move()" type="submit"
+				value="Submit" id="btnSubmit"></input>
+				<a
+					class="btn btn-primary continue" id="continue">Continue</a>
+			</div>
 
-	<!-- <ul id="file-list"></ul> -->
+			<div role="tabpanel" class="tab-pane" id="process">
+				<h3 class="">Process</h3>
+				<p>Process File</p>
+        <iframe src="http://18.220.215.95:8084/home" style="width:100%;height: 1000px; border: 0px"></iframe>
+				<a class="btn btn-primary back">Go Back</a> <a
+					class="btn btn-primary continue">Continue</a>
+			</div>
 
+			<div role="tabpanel" class="tab-pane" id="adjust">
+				<h3 class="">Adjust</h3>
+				<p>Adjust Loans</p>
+				<a class="btn btn-primary back">Go Back</a> <a
+					class="btn btn-primary continue">Place Order</a>
+			</div>
+		</div>
+	</div>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		var fileList = document.querySelector("#file-list");
-		(function() {
-			fetch("/files").then(function(response) {
-				response.json().then(function(data) {
-					if (Array.isArray(data) && data.length) {
-						for (var i = 0; i < data.length; i++) {
-							var li = document.createElement("li");
-							var name = data[i];
-							li.innerHTML = "<a href='/files/" + name + "'>" + name + "</a>";
-							fileList.appendChild(li);
-						}
-					}
-				});
-			})
-		})();
-	
 		function move() {
 			var elem = document.getElementById("myBar");
 			var width = 0;
@@ -110,23 +116,13 @@
 				}
 			}
 		}
-	
-		function calc() {
-			var elem = document.getElementById("myCal");
-			var width = 0;
-			var id = setInterval(frame, 0);
-			function frame() {
-				if (width >= 100) {
-					clearInterval(id);
-					$('#calculator').show();
-					$("#calculator").load(location.href + " #calculator");
-				} else {
-					$('#calculator').hide();
-					width++;
-					elem.style.width = width + '%';
-				}
-			}
-		}
+		
+		$('.continue').click(function() {
+			$('.nav-tabs > .active').next('li').find('a').trigger('click');
+		});
+		$('.back').click(function() {
+			$('.nav-tabs > .active').prev('li').find('a').trigger('click');
+		});
 		/*]]>*/
 	</script>
 </body>
