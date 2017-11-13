@@ -19,7 +19,7 @@ node {
     
     stage('Push Image') {
     try {
-      dir('') {
+      dir('src/docker') {
         docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
       }
     } catch (error) {
