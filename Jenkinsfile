@@ -17,11 +17,6 @@ node {
   	stage 'Build Docker image'
     sh "${mvnHome}/bin/mvn clean package -Pbuild-docker"
     
-    stage 'Acceptance Tests'
-    image.withRun('-p 8081:8081') {c ->
-        sh "${mvnHome}/bin/mvn verify"
-    }
-    
     stage 'Push image'
     sh "${mvnHome}/bin/mvn clean install -Pbuild-docker"
     
