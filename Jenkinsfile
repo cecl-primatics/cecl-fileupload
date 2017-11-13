@@ -15,7 +15,7 @@ node {
     sh "${mvnHome}/bin/mvn sonar:sonar"
   	
   	stage 'Build Docker image'
-    def image = docker.build('primaticsfinancial2017/cecl-fileupload-service:latest', '.')
+    sh "${mvnHome}/bin/mvn -Pbuild-docker"
     
     stage 'Acceptance Tests'
     image.withRun('-p 8081:8081') {c ->
