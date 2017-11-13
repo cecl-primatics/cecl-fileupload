@@ -5,7 +5,6 @@ node {
     git url: 'https://github.com/rama-arun/cecl-fileupload.git', branch: 'master'
     
     stage 'Build'
-    def mvnHome = tool "maven352"
     sh "${mvnHome}/bin/mvn clean install"
     
     stage 'Test'
