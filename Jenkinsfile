@@ -9,7 +9,6 @@ node {
     sh "${mvnHome}/bin/mvn clean install"
     
     stage 'Test'
-    def mvnHome = tool "maven352"
     sh "${mvnHome}/bin/mvn test"
     
     stage('SonarQube analysis') {
