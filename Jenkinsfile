@@ -9,23 +9,22 @@ node {
 
   stage('Create Docker Image') {
     dir('') {
-      docker.build("primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}")
+      docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}")
     }
   }
 
   stage ('Run Application') {
     try {
-      sh "docker run primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}"
+      sh "docker run primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}"
 
       // Run tests using Maven
-      //dir ('') {
-      //  sh 'mvn exec:java -DskipTests'
-      //}
+      dir ('') {
+       sh 'mvn exec:java -DskipTests'
+      }
     } catch (error) {
     } finally {
       // Stop and remove database container here
-      //sh 'docker-compose stop db'
-      //sh 'docker-compose rm db'
+      sh 'docker stop primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}'
     }
   }
 
@@ -33,7 +32,7 @@ node {
     try {
       dir('') {
         sh "mvn test"
-        docker.build("primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
+        docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
       }
     } catch (error) {
 
