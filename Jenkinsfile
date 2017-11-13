@@ -15,16 +15,6 @@ node {
     sh "${mvnHome}/bin/mvn sonar:sonar"
   	
   	stage 'Build & Push Docker image'
-    sh "${mvnHome}/bin/mvn clean install -Pbuild-docker"
-    
-    stage('Push Image') {
-    try {
-      dir('src/docker') {
-        docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
-      }
-    } catch (error) {
-
-    }
-  }
+    sh "${mvnHome}/bin/mvn package -Pbuild-docker"
     
 }
