@@ -14,8 +14,8 @@ node {
     stage 'SonarQube analysis'
     sh "${mvnHome}/bin/mvn sonar:sonar"
   	
-  	stage 'Build Docker image'
-    sh "${mvnHome}/bin/mvn clean package -Pbuild-docker"
+  	stage 'Build & Push Docker image'
+    sh "${mvnHome}/bin/mvn clean install -Pbuild-docker"
     
     stage('Push Image') {
     try {
