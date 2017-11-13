@@ -15,7 +15,7 @@ node {
     sh "${mvnHome}/bin/mvn sonar:sonar"
   	
   	stage 'Build Docker image'
-    sh "${mvnHome}/bin/mvn -Pbuild-docker"
+    sh "${mvnHome}/bin/mvn package -Pbuild-docker"
     
     stage 'Acceptance Tests'
     image.withRun('-p 8081:8081') {c ->
