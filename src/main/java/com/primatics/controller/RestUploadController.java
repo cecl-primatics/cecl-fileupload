@@ -61,7 +61,8 @@ public class RestUploadController {
 		try {
 			saveUploadedFiles(Arrays.asList(uploadfiles), extraField);
 			Stopwatch watch = Stopwatch.createStarted();
-			numOfFiles = restTemplate.getForEntity("http://localhost:8083/runjob/split/" + run_name, Integer.class);
+			System.out.println("**************************************"+run_name);
+			numOfFiles = restTemplate.getForEntity("http://cecl-poc-batch-service-cecl-poc.router.default.svc.cluster.local/runjob/split/" + run_name, Integer.class);
 			stopped = watch.stop();
 			long heapSize = Runtime.getRuntime().totalMemory();
 	        System.out.println("UPLOAD CONTROLLER - Heap Size = " + heapSize + " - Time: "+stopped);
@@ -92,20 +93,23 @@ public class RestUploadController {
 	public HttpEntity<byte[]> createOrUpdate(MultipartFile file, String extraField) {
 		String name = file.getOriginalFilename();
 		String runName = extraField + "_" + name.substring(0, name.lastIndexOf('.'));
-		try {
-			Optional<GridFSDBFile> existing = maybeLoadFile(runName);
-			if (existing.isPresent()) {
-				runName = "DUPLICATE_" + runName;
-			}
-			DBObject metadata = new BasicDBObject();
-			metadata.put("run_name", runName);
-			gridFsTemplate.store(file.getInputStream(), name, file.getContentType(), metadata).save();
-			String resp = "<script>window.location = '/';</script>";
-
-			return new HttpEntity<>(resp.getBytes());
-		} catch (IOException e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		Optional<GridFSDBFile> existing = maybeLoadFile(runName);
+		if (existing.isPresent()) {
+			runName = "DUPLICATE_" + runName;
 		}
+		DBObject metadata = new BasicDBObject();
+		metadata.put("run_name", runName);
+		System.out.println("************ In create or Update method for saving file");
+		try {
+		System.out.println("************ In create or Update method for saving file - BEFORE STORE");
+		gridFsTemplate.store(file.getInputStream(), name, file.getContentType(), metadata).save();
+		} catch (Exception e) {
+			System.out.println("************ In create or Update method for saving file - EXCEPTION");
+			logger.error(e.getMessage());
+		}
+		String resp = "<script>window.location = '/';</script>";
+
+		return new HttpEntity<>(resp.getBytes());
 	}
 
 	private static Query getFilenameQuery(String name) {
