@@ -1,43 +1,30 @@
 node {
-  checkout scm
-  env.PATH = "${tool 'maven352'}/bin:${env.PATH}"
-  stage('Package') {
-    dir('') {
-      sh 'mvn clean package -DskipTests'
-    }
-  }
+    env.JAVA_HOME="${tool 'jdk8'}"
 
-  stage('Create Docker Image') {
-    dir('') {
-      docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}")
-    }
-  }
-
-  stage ('Run Application') {
-    try {
-      sh "docker run primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}"
-	  sh "docker stop primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}"
-      // Run tests using Maven
-      dir ('') {
-       sh 'mvn exec:java -DskipTests'
-      }
-    } catch (error) {
-    } finally {
-      // Stop and remove database container here
-      sh 'docker stop primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}'
-    }
-  }
-
-  stage('Run Tests') {
+    stage 'Checkout'
+    git url: 'https://github.com/rama-arun/cecl-fileupload.git', branch: 'master'
+    
+    stage 'Build'
+    def mvnHome = tool "maven352"
+    sh "${mvnHome}/bin/mvn clean install"
+    
+    stage 'Test'
+    sh "${mvnHome}/bin/mvn test"
+    
+    stage 'SonarQube analysis'
+    sh "${mvnHome}/bin/mvn sonar:sonar"
+  	
+  	stage 'Build Docker image'
+    sh "${mvnHome}/bin/mvn clean package -Pbuild-docker"
+    
+    stage('Push Image') {
     try {
       dir('') {
-        sh "mvn test"
         docker.build("primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
       }
     } catch (error) {
 
-    } finally {
-      junit '**/target/surefire-reports/*.xml'
     }
   }
+    
 }
