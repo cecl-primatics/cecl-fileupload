@@ -16,7 +16,7 @@ node {
   stage ('Run Application') {
     try {
       sh "docker run primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}"
-
+	  sh "docker stop primaticsfinancial2017/cecl-poc-fileupload:${env.BUILD_NUMBER}"
       // Run tests using Maven
       dir ('') {
        sh 'mvn exec:java -DskipTests'
