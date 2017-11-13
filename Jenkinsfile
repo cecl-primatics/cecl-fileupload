@@ -15,7 +15,7 @@ node {
     sh "${mvnHome}/bin/mvn sonar:sonar"
   	
   	stage 'Build Docker image'
-    sh "${mvnHome}/bin/mvn package -Pbuild-docker"
+    sh "${mvnHome}/bin/mvn clean package -Pbuild-docker"
     
     stage 'Acceptance Tests'
     image.withRun('-p 8081:8081') {c ->
@@ -23,8 +23,6 @@ node {
     }
     
     stage 'Push image'
-    docker.withRegistry("https://index.docker.io/v1/", "docker") {
-        image.push()
-    }
+    sh "${mvnHome}/bin/mvn clean install -Pbuild-docker"
     
 }
