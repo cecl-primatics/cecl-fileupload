@@ -2,13 +2,13 @@ node {
   checkout scm
   env.PATH = "${tool 'maven352'}/bin:${env.PATH}"
   stage('Package') {
-    dir('webapp') {
+    dir('') {
       sh 'mvn clean package -DskipTests'
     }
   }
 
   stage('Create Docker Image') {
-    dir('webapp') {
+    dir('') {
       docker.build("primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}")
     }
   }
@@ -18,7 +18,7 @@ node {
       sh "docker run primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}"
 
       // Run tests using Maven
-      //dir ('webapp') {
+      //dir ('') {
       //  sh 'mvn exec:java -DskipTests'
       //}
     } catch (error) {
@@ -31,7 +31,7 @@ node {
 
   stage('Run Tests') {
     try {
-      dir('webapp') {
+      dir('') {
         sh "mvn test"
         docker.build("primaticsfinancial/cecl-poc-fileupload:${env.BUILD_NUMBER}").push()
       }
