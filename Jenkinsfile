@@ -2,7 +2,7 @@ node {
     env.JAVA_HOME="${tool 'jdk8'}"
 
     stage 'Checkout'
-    git url: 'https://github.com/rama-arun/cecl-fileupload.git', branch: 'master'
+    git url: 'https://github.com/cecl-primatics/cecl-fileupload.git', branch: 'master'
     
     stage 'Build'
     def mvnHome = tool "maven352"
