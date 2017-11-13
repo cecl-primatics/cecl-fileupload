@@ -11,12 +11,8 @@ node {
     stage 'Test'
     sh "${mvnHome}/bin/mvn test"
     
-    stage('SonarQube analysis') {
-    def scannerHome = tool 'sonarqube';
-    withSonarQubeEnv('sonarqube') {
-      sh "${scannerHome}/bin/sonar-scanner"
-    	}
-  	}
+    stage 'SonarQube analysis'
+    sh "${mvnHome}/bin/mvn sonar:sonar"
   	
   	stage 'Build Docker image'
     def image = docker.build('primaticsfinancial2017/cecl-fileupload-service:latest', '.')
