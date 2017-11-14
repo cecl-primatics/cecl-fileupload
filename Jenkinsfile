@@ -43,7 +43,7 @@ node {
     
     stage('Push image to Openshift') {
         def mvnHome = tool "maven352"
-        sh '${mvnHome}/bin/mvn clean install -DskipTests=true -Pbuild-docker'
+        sh "${mvnHome}/bin/mvn clean install -DskipTests=true -Pbuild-docker"
     }
     
     stage('Deploy into Openshift') {
