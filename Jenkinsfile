@@ -6,6 +6,11 @@ node {
 
         checkout scm
     }
+    
+    stage('Install') {
+    def mvnHome = tool "maven352"
+    sh "${mvnHome}/bin/mvn clean install -DskipTests=true"
+    }
 
     stage('Build image') {
         /* This builds the actual image; synonymous to
