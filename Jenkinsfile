@@ -49,6 +49,7 @@ node {
 	sh '/cicd/oc-tool/oc import-image cecl-poc-fileupload --from=primaticsfinancial2017/cecl-poc-fileupload'
     
     stage('Deploy into Openshift') {
-        sh '/cicd/oc-tool/oc rollout latest primaticsfinancial2017/cecl-poc-fileupload'
+        sh '/cicd/oc-tool/oc rollout cancel dc/cecl-poc-fileupload'
+        sh '/cicd/oc-tool/oc rollout latest dc/cecl-poc-fileupload'
     }
 }
