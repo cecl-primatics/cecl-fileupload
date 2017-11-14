@@ -10,8 +10,9 @@ node {
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-
+		dir('src/docker') {
         app = docker.build("primaticsfinancial2017/cecl-poc-fileupload")
+        }
     }
 
     stage('Test image') {
@@ -28,9 +29,11 @@ node {
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
+        dir('src/docker') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
+        }
         }
     }
 }
