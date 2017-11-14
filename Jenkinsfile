@@ -29,17 +29,20 @@ node {
         }
     }
 
-    stage('Push image') {
+    stage('Push image to DockerHUB') {
         /* Finally, we'll push the image with two tags:
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         dir('src/docker') {
         docker.withRegistry('https://registry.hub.docker.com', 'docker') {
-            app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
         }
+    }
+    
+    stage('Push image to Openshift') {
+        sh '${mvnHome}/bin/mvn clean install -DskipTests=true -Pbuild-docker'
     }
     
     stage('Deploy into Openshift') {
