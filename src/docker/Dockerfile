@@ -11,6 +11,6 @@ RUN alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 20
 RUN alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
 EXPOSE 8081
 #install Spring Boot artifact
-VOLUME ["/cicd"]
-ADD target/cecl-fileupload-service.jar cecl-fileupload-service.jar
+VOLUME ["/data"]
+ADD /maven/cecl-fileupload-service.jar cecl-fileupload-service.jar
 ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://cecl:cecl@mongodb-32-centos7/loans", "-jar","/cecl-fileupload-service.jar"]
