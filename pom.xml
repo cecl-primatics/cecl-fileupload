@@ -83,7 +83,7 @@
 									<alias>${docker.container.name}</alias>
 									<!-- Configure build settings -->
 									<build>
-										<dockerFileDir>${project.basedir}\src\docker</dockerFileDir>
+										<dockerFileDir>${project.basedir}</dockerFileDir>
 										<assembly>
 											<inline>
 												<fileSets>
