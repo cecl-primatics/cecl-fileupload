@@ -62,7 +62,7 @@ public class RestUploadController {
 			saveUploadedFiles(Arrays.asList(uploadfiles), extraField);
 			Stopwatch watch = Stopwatch.createStarted();
 			System.out.println("**************************************"+run_name);
-			numOfFiles = restTemplate.getForEntity("http://cecl-batch-service.cecl-test:30011/runjob/split/" + run_name, Integer.class);
+			numOfFiles = restTemplate.getForEntity("http://18.216.252.12:30011/runjob/split/" + run_name, Integer.class);
 			stopped = watch.stop();
 			long heapSize = Runtime.getRuntime().totalMemory();
 	        System.out.println("UPLOAD CONTROLLER - Heap Size = " + heapSize + " - Time: "+stopped);
