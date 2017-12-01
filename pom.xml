@@ -71,22 +71,52 @@
 			<id>build-docker</id>
 			<build>
 				<plugins>
-				<!-- mvn package docker:build -->
+
 					<plugin>
-						<groupId>com.spotify</groupId>
+						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.2.3</version>
+						<version>0.18.1</version>
 						<configuration>
-							<imageName>primaticsfinancial2017/cecl-fileupload</imageName>
-							<dockerDirectory>/</dockerDirectory>
-							<resources>
-								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.build.directory}</directory>
-									<include>${project.build.finalName}.jar</include>
-								</resource>
-							</resources>
+							<images>
+								<image>
+									<name>primaticsfinancial2017/cecl-fileupload</name>
+									<alias>${docker.container.name}</alias>
+									<!-- Configure build settings -->
+									<build>
+										<dockerFileDir>${project.basedir}/src/docker</dockerFileDir>
+										<assembly>
+											<inline>
+												<fileSets>
+													<fileSet>
+														<directory>${project.basedir}/target</directory>
+														<outputDirectory>.</outputDirectory>
+														<includes>
+															<include>*.jar</include>
+														</includes>
+													</fileSet>
+												</fileSets>
+											</inline>
+										</assembly>
+									</build>
+								</image>
+							</images>
 						</configuration>
+						<executions>
+							<execution>
+								<id>docker:build</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker:push</id>
+								<phase>install</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 				<pluginManagement>

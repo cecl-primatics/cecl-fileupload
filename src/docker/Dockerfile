@@ -12,7 +12,6 @@ RUN alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 20000
 EXPOSE 8081
 #install Spring Boot artifact
 USER 1000050000
-VOLUME /tmp
-ADD target/cecl-fileupload-service.jar cecl-fileupload-service.jar
-RUN sh -c 'touch cecl-fileupload-service.jar'
-ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://cecl:cecl@18.221.202.202/loans", "-jar","cecl-fileupload-service.jar"]
+VOLUME ["/data"]
+ADD /maven/cecl-fileupload-service.jar cecl-fileupload-service.jar
+ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://cecl:cecl@18.221.202.202/loans", "-jar","/cecl-fileupload-service.jar"]
