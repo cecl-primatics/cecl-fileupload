@@ -9,11 +9,10 @@ RUN yum -y install /tmp/jdk-8-linux-x64.rpm
 RUN alternatives --install /usr/bin/jar jar /usr/java/latest/bin/java 200000
 RUN alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000
 RUN alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
-RUN mvn install 
 EXPOSE 8081
 #install Spring Boot artifact
 USER 1000050000
 VOLUME /tmp
-RUN sh -c 'touch cecl-fileupload'
 ADD target/cecl-fileupload-service.jar cecl-fileupload-service.jar
+RUN sh -c 'touch cecl-fileupload-service.jar'
 ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://cecl:cecl@18.221.202.202/loans", "-jar","cecl-fileupload-service.jar"]
