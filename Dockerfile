@@ -13,4 +13,5 @@ EXPOSE 8081
 #install Spring Boot artifact
 USER 1000050000
 VOLUME ["/data"]
+ADD /data/cecl-fileupload-service.jar cecl-fileupload-service.jar
 ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://cecl:cecl@18.221.202.202/loans", "-jar","cecl-fileupload-service.jar"]
