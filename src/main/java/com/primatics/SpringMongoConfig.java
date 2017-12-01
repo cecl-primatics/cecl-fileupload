@@ -36,7 +36,7 @@ public class SpringMongoConfig extends AbstractMongoConfiguration{
 
 	    // Set credentials      
 	    MongoCredential credential = MongoCredential.createCredential("cecl", getDatabaseName(), "cecl".toCharArray());
-	    ServerAddress serverAddress = new ServerAddress("mongodb-32-centos7", 27017);
+	    ServerAddress serverAddress = new ServerAddress("18.221.202.202", 27017);
 
 	    // Mongo Client
 	    MongoClient mongoClient = new MongoClient(serverAddress,Arrays.asList(credential)); 
@@ -51,7 +51,7 @@ public class SpringMongoConfig extends AbstractMongoConfiguration{
 	@Override
 	@Bean
 	public Mongo mongo() throws Exception {
-		return new MongoClient("mongodb-32-centos7");
+		return new MongoClient("18.221.202.202");
 	}
 
 }
